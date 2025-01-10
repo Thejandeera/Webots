@@ -4,12 +4,13 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/project
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/floors/protos/RectangleArena.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/apartment_structure/protos/Wall.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/robots/gctronic/e-puck/protos/E-puck.proto"
 
 WorldInfo {
 }
 Viewpoint {
   orientation -0.5773502691896258 0.5773502691896258 0.5773502691896258 2.0944
-  position 3.997474864196199e-11 3.99748616777444e-11 6.312709353485418
+  position -5.223801725868817e-06 -5.223816497565192e-06 4.465282152716046
 }
 TexturedBackground {
 }
@@ -230,4 +231,8 @@ Wall {
   translation 0.125 0.5 0
   name "wall(12)"
   size 1.25 0.01 0.1
+}
+E-puck {
+  translation 0.28 -0.12 0
+  controller "thejan_controller_1"
 }
