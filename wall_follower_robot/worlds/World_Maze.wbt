@@ -14,8 +14,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation -0.5666785448399496 0.5699564295381133 0.5950000800388542 2.0630517075199024
-  position 0.10738922251934929 -0.3393414375480619 6.311367343855363
+  orientation -0.5614515717005963 0.5618828054617455 0.6075029593025605 2.0490799381998914
+  position 0.2694055996520755 -0.45930122562155723 6.201157672586254
 }
 TexturedBackground {
 }
@@ -241,13 +241,14 @@ Wall {
   size 1.25 0.01 0.1
 }
 E-puck {
-  translation 0.69 -1.13 0
-  controller "thejan_controller_1"
+  translation 0.873233 -1.11 -0.00143347
+  rotation -6.849074422629176e-07 -0.9999999999997649 -3.61719000364165e-08 0.004094513528271434
+  controller "thejan_controller_2"
 }
 SolidBox {
   translation -1.13 -0.49 0.05
   name "green box"
-  size 0.25 0.02 0.1
+  size 0.1 0.01 0.1
   appearance PBRAppearance {
     baseColor 0 1 0
     baseColorMap ImageTexture {
@@ -263,9 +264,10 @@ SolidBox {
   }
 }
 SolidBox {
-  translation 0.67 0.49 0.05
+  translation 0.6699963740611563 0.4851189075915872 0.049882482311998405
+  rotation 0.9996465295405191 -0.026044454487685564 -0.0053387609081900845 0.0022776114510567797
   name "red box"
-  size 0.15 0.02 0.1
+  size 0.1 0.01 0.1
   appearance PBRAppearance {
     baseColor 1 0 0
     baseColorMap ImageTexture {
@@ -281,9 +283,10 @@ SolidBox {
   }
 }
 SolidBox {
-  translation 0.9 -0.24 0.05
+  translation 0.8949709242990888 -0.23515827224403923 0.049843802319641244
+  rotation -0.9788797672661947 -0.2044168021991231 -0.002858708723370115 0.0031074956550687116
   name "brown box"
-  size 0.2 0.02 0.1
+  size 0.1 0.01 0.1
   appearance PBRAppearance {
     baseColor 0.647059 0.509804 0.117647
     baseColorMap ImageTexture {
@@ -299,9 +302,10 @@ SolidBox {
   }
 }
 SolidBox {
-  translation 0.6 -0.49 0.05
+  translation 0.6000000438017168 -0.4851505819014452 0.04985072972187163
+  rotation -0.9999999997899351 -7.126339440774807e-06 1.9218351078145557e-05 0.002886903632766162
   name "pink box"
-  size 0.19 0.02 0.1
+  size 0.1 0.01 0.1
   appearance PBRAppearance {
     baseColor 1 0 1
     baseColorMap ImageTexture {
@@ -317,9 +321,10 @@ SolidBox {
   }
 }
 SolidBox {
-  translation 0.13 -1.24 0.05
+  translation 0.12481123914532022 -1.2400001502262594 0.049813362336985294
+  rotation 0.006676255158786432 -0.999977211394057 -0.0010021524934234905 0.0005593278791687935
   name "yellow box"
-  size 0.24 0.02 0.1
+  size 0.1 0.01 0.1
   appearance PBRAppearance {
     baseColor 1 1 0
     baseColorMap ImageTexture {
