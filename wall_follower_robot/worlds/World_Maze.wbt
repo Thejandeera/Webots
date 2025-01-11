@@ -5,12 +5,17 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/project
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/floors/protos/RectangleArena.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/apartment_structure/protos/Wall.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/robots/gctronic/e-puck/protos/E-puck.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/solids/protos/SolidBox.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/appearances/protos/Parquetry.proto"
 
 WorldInfo {
+  info [
+    ""
+  ]
 }
 Viewpoint {
-  orientation -0.5773502691896258 0.5773502691896258 0.5773502691896258 2.0944
-  position -5.223801725868817e-06 -5.223816497565192e-06 4.465282152716046
+  orientation -0.5666785448399496 0.5699564295381133 0.5950000800388542 2.0630517075199024
+  position 0.10738922251934929 -0.3393414375480619 6.311367343855363
 }
 TexturedBackground {
 }
@@ -18,6 +23,9 @@ TexturedBackgroundLight {
 }
 RectangleArena {
   floorSize 2.5 2.5
+  floorAppearance Parquetry {
+    type "light strip"
+  }
 }
 Wall {
   translation -1.125 -1 0
@@ -233,6 +241,96 @@ Wall {
   size 1.25 0.01 0.1
 }
 E-puck {
-  translation 0.28 -0.12 0
+  translation 0.69 -1.13 0
   controller "thejan_controller_1"
+}
+SolidBox {
+  translation -1.13 -0.49 0.05
+  name "green box"
+  size 0.25 0.02 0.1
+  appearance PBRAppearance {
+    baseColor 0 1 0
+    baseColorMap ImageTexture {
+      url [
+        "green.jpg"
+      ]
+      repeatS FALSE
+      repeatT FALSE
+      filtering 0
+    }
+    roughness 0.5
+    metalness 0
+  }
+}
+SolidBox {
+  translation 0.67 0.49 0.05
+  name "red box"
+  size 0.15 0.02 0.1
+  appearance PBRAppearance {
+    baseColor 1 0 0
+    baseColorMap ImageTexture {
+      url [
+        "red2.jpg"
+      ]
+      filtering 1
+    }
+    roughness 0.5
+    metalness 0
+  }
+  physics Physics {
+  }
+}
+SolidBox {
+  translation 0.9 -0.24 0.05
+  name "brown box"
+  size 0.2 0.02 0.1
+  appearance PBRAppearance {
+    baseColor 0.647059 0.509804 0.117647
+    baseColorMap ImageTexture {
+      url [
+        "brown.jpg"
+      ]
+      filtering 1
+    }
+    roughness 0.5
+    metalness 0
+  }
+  physics Physics {
+  }
+}
+SolidBox {
+  translation 0.6 -0.49 0.05
+  name "pink box"
+  size 0.19 0.02 0.1
+  appearance PBRAppearance {
+    baseColor 1 0 1
+    baseColorMap ImageTexture {
+      url [
+        "pink.jpg"
+      ]
+      filtering 1
+    }
+    roughness 0.5
+    metalness 0
+  }
+  physics Physics {
+  }
+}
+SolidBox {
+  translation 0.13 -1.24 0.05
+  name "yellow box"
+  size 0.24 0.02 0.1
+  appearance PBRAppearance {
+    baseColor 1 1 0
+    baseColorMap ImageTexture {
+      url [
+        "yellow.jpg"
+      ]
+      filtering 1
+    }
+    roughness 0.5
+    metalness 0
+  }
+  physics Physics {
+  }
 }
