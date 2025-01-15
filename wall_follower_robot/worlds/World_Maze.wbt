@@ -6,7 +6,6 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/project
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/apartment_structure/protos/Wall.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/robots/gctronic/e-puck/protos/E-puck.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/solids/protos/SolidBox.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/appearances/protos/Parquetry.proto"
 
 WorldInfo {
   info [
@@ -14,8 +13,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation -0.5614515717005963 0.5618828054617455 0.6075029593025605 2.0490799381998914
-  position 0.2694055996520755 -0.45930122562155723 6.201157672586254
+  orientation -0.5800861173503865 0.5776360924180036 0.5743140614623791 2.1026121341453923
+  position 0.10591391642631845 0.04391881403965166 5.314333430309269
 }
 TexturedBackground {
 }
@@ -23,9 +22,6 @@ TexturedBackgroundLight {
 }
 RectangleArena {
   floorSize 2.5 2.5
-  floorAppearance Parquetry {
-    type "light strip"
-  }
 }
 Wall {
   translation -1.125 -1 0
@@ -241,9 +237,9 @@ Wall {
   size 1.25 0.01 0.1
 }
 E-puck {
-  translation 0.873233 -1.11 -0.00143347
+  translation 0.393251 0.62 -0.0033984
   rotation -6.849074422629176e-07 -0.9999999999997649 -3.61719000364165e-08 0.004094513528271434
-  controller "thejan_controller_2"
+  controller "floodfill_1"
 }
 SolidBox {
   translation -1.13 -0.49 0.05

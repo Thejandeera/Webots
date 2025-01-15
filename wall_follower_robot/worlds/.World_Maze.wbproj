@@ -6,7 +6,7 @@ maximizedDockId: -1
 centralWidgetVisible: 1
 renderingMode: PLAIN
 orthographicViewHeight: 1
-textFiles: 1 "controllers/thejan_controller_1/thejan_controller_1.py" "controllers/thejan_controller_2/thejan_controller_2.py"
+textFiles: 4 "controllers/thejan_controller_1/thejan_controller_1.py" "controllers/thejan_controller_2/thejan_controller_2.py" "controllers/thejan_controller_3/thejan_controller_3.py" "controllers/floodfill/floodfill.py" "controllers/floodfill_1/floodfill_1.py"
 globalOptionalRendering: CoordinateSystem
 consoles: Console:All:All
-renderingDevicePerspectives: e-puck:camera;1;0.820513;0;0
+renderingDevicePerspectives: e-puck:camera;1;3.07692;0;0

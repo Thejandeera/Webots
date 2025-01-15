@@ -36,9 +36,9 @@ class ColorSequenceRobot:
         self.current_target = 0
         
         # Robot parameters
-        self.MAX_SPEED = 6.28
+        self.MAX_SPEED = 15
         self.WALL_THRESHOLD = 80
-        self.MIN_DIST = 100
+        self.MIN_DIST = 120
         
         # Robot state
         self.state = 'EXPLORE'
