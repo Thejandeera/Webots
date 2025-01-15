@@ -1,4 +1,4 @@
-from controller import Robot,  Motor, Gyro, DistanceSensor
+from controller import Robot
 
 # Constants
 WHEEL_RADIUS = 0.0205  # Wheel radius in meters
@@ -13,29 +13,19 @@ def inisialize_sensor(timestep):
         
     return proxy_sensors
 
-def adjust_path(robot, proxy_sensors, timestep):
-    left_motor = robot.getDevice('left wheel motor')
-    right_motor = robot.getDevice('right wheel motor')
-    left_motor.setPosition(float('inf'))
-    right_motor.setPosition(float('inf'))
-    
+def adjust_path(left_motor, right_motor, proxy_sensors):
     left_corner = proxy_sensors[6].getValue() > 80
-    left_wall = proxy_sensors[5].getValue() > 70
+    left_wall = proxy_sensors[5].getValue() > 80
     right_wall = proxy_sensors[2].getValue() > 80
     right_corner = proxy_sensors[1].getValue() > 80
     
-    if left_wall:
-        turn_right(robot)
-        while robot.step(timestep) != 1:
-            back = proxy_sensors[4].getValue() > 70
-            print(back)
-            if back:
-                left_motor.setVelocity(MAX_SPEED)
-                right_motor.setVelocity(MAX_SPEED)
-            else:
-                break
-        turn_left(robot)
-        
+    if left_wall or left_corner:
+        right_motor.setVelocity(MAX_SPEED / 2)
+    elif right_wall or right_corner:
+        left_motor.setVelocity(MAX_SPEED / 2)
+    else:
+        left_motor.setVelocity(MAX_SPEED)
+        right_motor.setVelocity(MAX_SPEED)
 
         
 
@@ -54,24 +44,31 @@ def move_forward(robot):
     # Calculate the time needed to move the distance
 
     time_needed = 2
-    start_time = robot.getTime()
     timestep = int(robot.getBasicTimeStep())
+    start_time = robot.getTime()
+
     
     #getting sensor readings
-    #getting sensor readings
-    proxy_sensors = inisialize_sensor(timestep)
+    # proxy_sensors = inisialize_sensor(timestep)
 
-
+    sensor = robot.getDevice('ps0')
+    sensor.enable(timestep)
+    
     while robot.step(timestep) != -1:
         # print(robot.getTime() - start_time)
-        sensor_value = proxy_sensors[0].getValue() > 80
-
-        if robot.getTime() - start_time >= time_needed or sensor_value:
+        if sensor.getValue() > 80:
+            left_motor.setVelocity(0)
+            right_motor.setVelocity(0)
+            return True
+        # adjust_path(left_motor, right_motor, proxy_sensors)
+        # print(sensor.getValue())
+        if robot.getTime() - start_time >= time_needed:
             break
             
-    left_motor.setVelocity(0)
-    right_motor.setVelocity(0)
-    return sensor_value
+        left_motor.setVelocity(0)
+        right_motor.setVelocity(0)
+        return False
+        
 
 def turn_left(robot):
     timestep = int(robot.getBasicTimeStep())
@@ -160,10 +157,9 @@ def find_next(position, maze):
     if y > 0:
         if current_val -1 == maze[x][y-1]:
             next.append([x, y-1])
-            
-    return next
  
-    
+    print(next)
+    return next 
 
 def how_to_move(current, next, facing_direction):
     if facing_direction == 'x':
@@ -211,9 +207,7 @@ if __name__ == "__main__":
     
     #input the position 
     facing_direction = 'x'
-    position = [3]
-    position.append(1)
-    print(position)
+    position = [9, 0]
 
     maze = [[24, 21, 20, 19, 18, 17, 16, 11, 10, 9],
             [23, 22, 21, 20, 17, 16, 15, 12, 7, 8],
@@ -221,7 +215,7 @@ if __name__ == "__main__":
             [25, 24, 23, 6, 5, 2, 1, 0, 5, 6],
             [26, 25, 24, 7, 4, 3, 2, 1, 4, 7],
             [27, 26, 25, 8, 5, 4, 3, 2, 3, 8],
-            [28, 27, 10, 9, 7, 8, 10, 3, 4, 5],
+            [29, 27, 10, 9, 7, 8, 10, 3, 4, 5],
             [29, 28, 11, 12, 23, 14, 9, 8, 7, 6],
             [30, 31, 34, 35, 38, 15, 12, 11, 8, 11],
             [33, 32, 33, 36, 37, 16, 13, 10, 9, 10]]
@@ -235,25 +229,21 @@ if __name__ == "__main__":
     while maze[position[0]][position[1]] != 0:
         # print(position, maze[position[0]][position[1]])
         next = find_next(position, maze)
-
-        print(len(next))
-        
+        # move = how_to_move(position, next, facing_direction)          
+        # print(next, move)
         
         for nex in next:
             move = how_to_move(position, nex, facing_direction)          
-            print(move)
-            print(f"current pos: {position} next: {nex}")        
-            # position[0], position[1] = nex[0], nex[1] 
+            # print(nex)
             if move == 'f':
                 if move_forward(robot):
                     if len(next) > 1:
                         continue
                     else:
-                        position[0], position[1] = nex[0], nex[1]
+                        position[0], position[1] = nex[0], nex[1] 
+
                         break
-                else:
-                    position[0], position[1] = nex[0], nex[1]
-                    break
+                        
                 
             elif move == 'l':
                 turn_left(robot)
@@ -269,12 +259,10 @@ if __name__ == "__main__":
                     if len(next) > 1:
                         continue
                     else:
-                        position[0], position[1] = nex[0], nex[1]
+                        position[0], position[1] = nex[0], nex[1] 
                         break
-                else:
-                    position[0], position[1] = nex[0], nex[1]
-                    break
-    
+        
+        
             elif move == 'r':
                 turn_right(robot)
                 if facing_direction == 'x':
@@ -289,12 +277,17 @@ if __name__ == "__main__":
                     if len(next) > 1:
                         continue
                     else:
-                        position[0], position[1] = nex[0], nex[1]
-                        break 
-                else:
-                    position[0], position[1] = nex[0], nex[1]
-                    break
-               
+                        position[0], position[1] = nex[0], nex[1] 
+                        break
+
+
+
+        print(facing_direction)
+            
+        print(position)
+        
+        
+        
         
         
         
