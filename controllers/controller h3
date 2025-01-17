@@ -1,0 +1,129 @@
+from controller import Robot
+
+# Constants
+MAX_SPEED = 6.28  # Maximum speed in rad/s
+TARGET_VALUES = [16, 10, 6, 3, 0]  # Red, Yellow, Pink, Brown, Green
+
+# Revised Maze
+maze = [
+    [24, 23, 22, 21, 20, 19, 18, 17, 16, 15],
+    [23, 22, 21, 20, 19, 18, 17, 16, 15, 14],
+    [22, 21, 20, 19, 18, 17, 16, 15, 14, 13],
+    [21, 20, 19, 18, 17, 16, 15, 14, 13, 12],
+    [20, 19, 18, 17, 16, 15, 14, 13, 12, 11],
+    [19, 18, 17, 16, 15, 14, 13, 12, 11, 10],
+    [18, 17, 16, 15, 14, 13, 12, 11, 10, 9],
+    [17, 16, 15, 14, 13, 12, 11, 10, 9, 8],
+    [16, 15, 14, 13, 12, 11, 10, 9, 8, 7],
+    [15, 14, 13, 12, 11, 10, 9, 8, 7, 6],
+]
+
+# Robot Initialization
+robot = Robot()
+timestep = int(robot.getBasicTimeStep())
+
+# Motors
+left_motor = robot.getDevice('left wheel motor')
+right_motor = robot.getDevice('right wheel motor')
+left_motor.setPosition(float('inf'))
+right_motor.setPosition(float('inf'))
+left_motor.setVelocity(0)
+right_motor.setVelocity(0)
+
+# Color Sensor
+color_sensor = robot.getDevice("color_sensor")
+color_sensor.enable(timestep)
+
+# Detect color using RGB values
+def detect_color():
+    rgb = color_sensor.getImage()
+    red = color_sensor.imageGetRed(rgb)
+    green = color_sensor.imageGetGreen(rgb)
+    blue = color_sensor.imageGetBlue(rgb)
+    
+    if red > 200 and green < 100 and blue < 100:
+        return "Red"
+    elif red > 200 and green > 200 and blue < 100:
+        return "Yellow"
+    elif red > 200 and green < 150 and blue > 150:
+        return "Pink"
+    elif red > 100 and green < 100 and blue < 50:
+        return "Brown"
+    elif red < 100 and green > 200 and blue < 100:
+        return "Green"
+    else:
+        return "Unknown"
+
+# Pathfinding using BFS
+def bfs(maze, start, target):
+    rows, cols = len(maze), len(maze[0])
+    queue = [(start, [])]  # (current_position, path)
+    visited = set()
+    
+    while queue:
+        (x, y), path = queue.pop(0)
+        
+        if (x, y) in visited:
+            continue
+        visited.add((x, y))
+        path = path + [(x, y)]
+        
+        if maze[x][y] == target:
+            return path
+        
+        neighbors = []
+        if x > 0: neighbors.append((x - 1, y))
+        if x < rows - 1: neighbors.append((x + 1, y))
+        if y > 0: neighbors.append((x, y - 1))
+        if y < cols - 1: neighbors.append((x, y + 1))
+        
+        for nx, ny in neighbors:
+            if (nx, ny) not in visited and maze[nx][ny] <= maze[x][y]:
+                queue.append(((nx, ny), path))
+    
+    return []
+
+# Translate path to movement commands
+def calculate_movements(path):
+    movements = []
+    for i in range(1, len(path)):
+        curr_x, curr_y = path[i - 1]
+        next_x, next_y = path[i]
+        if next_x == curr_x and next_y == curr_y + 1:
+            movements.append("RIGHT")
+        elif next_x == curr_x and next_y == curr_y - 1:
+            movements.append("LEFT")
+        elif next_x == curr_x + 1 and next_y == curr_y:
+            movements.append("DOWN")
+        elif next_x == curr_x - 1 and next_y == curr_y:
+            movements.append("UP")
+    return movements
+
+# Execute movements
+def execute_movements(movements):
+    for move in movements:
+        if move == "UP":
+            left_motor.setVelocity(MAX_SPEED)
+            right_motor.setVelocity(MAX_SPEED)
+        elif move == "LEFT":
+            left_motor.setVelocity(-MAX_SPEED / 2)
+            right_motor.setVelocity(MAX_SPEED / 2)
+        elif move == "RIGHT":
+            left_motor.setVelocity(MAX_SPEED / 2)
+            right_motor.setVelocity(-MAX_SPEED / 2)
+        elif move == "DOWN":
+            left_motor.setVelocity(-MAX_SPEED)
+            right_motor.setVelocity(-MAX_SPEED)
+        robot.step(timestep)
+    left_motor.setVelocity(0)
+    right_motor.setVelocity(0)
+
+# Main Loop
+if __name__ == "__main__":
+    current_position = (0, 0)  # Starting point
+    for target in TARGET_VALUES:
+        path = bfs(maze, current_position, target)
+        movements = calculate_movements(path)
+        execute_movements(movements)
+        current_position = path[-1]
+        print(f"Reached: {detect_color()}")
