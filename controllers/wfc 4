@@ -8,7 +8,7 @@ def run_robot(robot):
     max_speed = 6.28
     
     # Enable motors
-    left_motor = robot.getMotor('left wheel motor')
+    left_motor = robot.get('left wheel motor')
     right_motor = robot.getMotor('right wheel motor')
     
     left_motor.setPosition(float('inf'))
@@ -27,32 +27,50 @@ def run_robot(robot):
     # Enable the camera
     camera = robot.getDevice("camera")
     camera.enable(timestep)
-    
-    def detect_color():
-        """Detect the color of the wall using the camera."""
-        image = camera.getImage()
-        width = camera.getWidth()
-        height = camera.getHeight()
-        
-        # Get the RGB values of the central pixel
-        red = camera.imageGetRed(image, width, height // 2, width // 2)
-        green = camera.imageGetGreen(image, width, height // 2, width // 2)
-        blue = camera.imageGetBlue(image, width, height // 2, width // 2)
-        
-        # Determine the color based on thresholds
-        if red > 200 and green < 100 and blue < 100:
-            return "Red"
-        elif red > 200 and green > 200 and blue < 100:
-            return "Yellow"
-        elif red > 200 and green < 150 and blue > 150:
-            return "Pink"
-        elif red > 100 and green < 100 and blue < 50:
-            return "Brown"
-        elif red < 100 and green > 200 and blue < 100:
-            return "Green"
-        else:
-            return "Unknown"
 
+    def detect_color():
+    """Detect the dominant color in the entire image using the camera."""
+    image = camera.getImage()
+    if image is None:
+        print("Camera image is not available")
+        return "Unknown"
+    
+    width = camera.getWidth()
+    height = camera.getHeight()
+    
+    # Initialize accumulators for RGB values
+    total_red = 0
+    total_green = 0
+    total_blue = 0
+    total_pixels = width * height  # Total number of pixels in the image
+
+    # Iterate over all pixels
+    for y in range(height):
+        for x in range(width):
+            total_red += camera.imageGetRed(image, width, y, x)
+            total_green += camera.imageGetGreen(image, width, y, x)
+            total_blue += camera.imageGetBlue(image, width, y, x)
+    
+    # Calculate the average RGB values
+    avg_red = total_red / total_pixels
+    avg_green = total_green / total_pixels
+    avg_blue = total_blue / total_pixels
+    
+    # Determine the color based on average RGB thresholds
+    if avg_red > 200 and avg_green < 100 and avg_blue < 100:
+        return "Red"
+    elif avg_red > 200 and avg_green > 200 and avg_blue < 100:
+        return "Yellow"
+    elif avg_red > 200 and avg_green < 150 and avg_blue > 150:
+        return "Pink"
+    elif avg_red > 100 and avg_green < 100 and avg_blue < 50:
+        return "Brown"
+    elif avg_red < 100 and avg_green > 200 and avg_blue < 100:
+        return "Green"
+    else:
+        return "Unknown"
+
+    
     # Main loop
     while robot.step(timestep) != -1:
         # Read the sensors
