@@ -1,15 +1,15 @@
 from controller import Robot
 
 def run_robot(robot):
-    """ Wall-following robot with continuous camera monitoring and centering between walls """
+    """ Wall-following robot with color detection based on the whole image """
     
     # Get the time step of the current world
     timestep = int(robot.getBasicTimeStep())
     max_speed = 6.28
     
     # Enable motors
-    left_motor = robot.get('left wheel motor')
-    right_motor = robot.getMotor('right wheel motor')
+    left_motor = robot.getDevice('left wheel motor')
+    right_motor = robot.getDevice('right wheel motor')
     
     left_motor.setPosition(float('inf'))
     left_motor.setVelocity(0.0)
@@ -21,56 +21,55 @@ def run_robot(robot):
     prox_sensors = []
     for ind in range(8):
         sensor_name = 'ps' + str(ind)
-        prox_sensors.append(robot.getDistanceSensor(sensor_name))
+        prox_sensors.append(robot.getDevice(sensor_name))
         prox_sensors[ind].enable(timestep)
     
     # Enable the camera
     camera = robot.getDevice("camera")
     camera.enable(timestep)
-
+    
     def detect_color():
-    """Detect the dominant color in the entire image using the camera."""
-    image = camera.getImage()
-    if image is None:
-        print("Camera image is not available")
-        return "Unknown"
-    
-    width = camera.getWidth()
-    height = camera.getHeight()
-    
-    # Initialize accumulators for RGB values
-    total_red = 0
-    total_green = 0
-    total_blue = 0
-    total_pixels = width * height  # Total number of pixels in the image
+        """Detect the dominant color in the entire image using the camera."""
+        image = camera.getImage()
+        if image is None:
+            print("Camera image is not available")
+            return "Unknown"
+        
+        width = camera.getWidth()
+        height = camera.getHeight()
+        
+        # Initialize accumulators for RGB values
+        total_red = 0
+        total_green = 0
+        total_blue = 0
+        total_pixels = width * height  # Total number of pixels in the image
 
-    # Iterate over all pixels
-    for y in range(height):
-        for x in range(width):
-            total_red += camera.imageGetRed(image, width, y, x)
-            total_green += camera.imageGetGreen(image, width, y, x)
-            total_blue += camera.imageGetBlue(image, width, y, x)
-    
-    # Calculate the average RGB values
-    avg_red = total_red / total_pixels
-    avg_green = total_green / total_pixels
-    avg_blue = total_blue / total_pixels
-    
-    # Determine the color based on average RGB thresholds
-    if avg_red > 200 and avg_green < 100 and avg_blue < 100:
-        return "Red"
-    elif avg_red > 200 and avg_green > 200 and avg_blue < 100:
-        return "Yellow"
-    elif avg_red > 200 and avg_green < 150 and avg_blue > 150:
-        return "Pink"
-    elif avg_red > 100 and avg_green < 100 and avg_blue < 50:
-        return "Brown"
-    elif avg_red < 100 and avg_green > 200 and avg_blue < 100:
-        return "Green"
-    else:
-        return "Unknown"
+        # Iterate over all pixels
+        for y in range(height):
+            for x in range(width):
+                total_red += camera.imageGetRed(image, width, y, x)
+                total_green += camera.imageGetGreen(image, width, y, x)
+                total_blue += camera.imageGetBlue(image, width, y, x)
+        
+        # Calculate the average RGB values
+        avg_red = total_red / total_pixels
+        avg_green = total_green / total_pixels
+        avg_blue = total_blue / total_pixels
+        
+        # Determine the color based on average RGB thresholds
+        if avg_red > 200 and avg_green < 100 and avg_blue < 100:
+            return "Red"
+        elif avg_red > 200 and avg_green > 200 and avg_blue < 100:
+            return "Yellow"
+        elif avg_red > 200 and avg_green < 150 and avg_blue > 150:
+            return "Pink"
+        elif avg_red > 100 and avg_green < 100 and avg_blue < 50:
+            return "Brown"
+        elif avg_red < 100 and avg_green > 200 and avg_blue < 100:
+            return "Green"
+        else:
+            return "Unknown"
 
-    
     # Main loop
     while robot.step(timestep) != -1:
         # Read the sensors
@@ -92,7 +91,6 @@ def run_robot(robot):
             right_speed = -max_speed
         else:
             if left_wall and right_wall:
-                # Center between two walls
                 print("Centering between two walls")
                 balance_factor = (left_distance - right_distance) / 10  # Normalize difference
                 left_speed = max_speed - balance_factor
