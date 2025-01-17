@@ -1,5 +1,5 @@
 from controller import Robot
-
+#v1
 def run_robot(robot):
     """ Wall-following robot with color detection based on the whole image """
     
