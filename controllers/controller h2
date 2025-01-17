@@ -1,0 +1,141 @@
+from controller import Robot
+
+# Constants
+MAX_SPEED = 6.28  # Maximum speed in rad/s
+TARGET_VALUES = [16, 10, 6, 3, 0]  # Red, Yellow, Pink, Brown, Green
+
+# Maze definition (values map to targets)
+maze = [
+    [24, 22, 22, 19, 18, 17, 16, 11, 10, 9],
+    [23, 22, 21, 20, 17, 16, 15, 12, 7, 8],
+    [24, 25, 22, 19, 18, 10, 14, 13, 6, 8],
+    [25, 24, 23, 6, 5, 2, 1, 0, 5, 6],
+    [26, 25, 24, 7, 4, 3, 2, 1, 4, 7],
+    [27, 26, 25, 8, 5, 4, 3, 2, 3, 8],
+    [29, 27, 10, 9, 7, 8, 10, 3, 3, 5],
+    [29, 28, 11, 12, 23, 14, 9, 8, 7, 6],
+    [30, 31, 34, 35, 38, 15, 12, 11, 8, 11],
+    [33, 32, 33, 36, 37, 16, 13, 10, 9, 10],
+]
+
+# Initialize robot
+robot = Robot()
+timestep = int(robot.getBasicTimeStep())
+
+# Motors
+left_motor = robot.getDevice('left wheel motor')
+right_motor = robot.getDevice('right wheel motor')
+left_motor.setPosition(float('inf'))
+right_motor.setPosition(float('inf'))
+left_motor.setVelocity(0)
+right_motor.setVelocity(0)
+
+# Color sensor
+color_sensor = robot.getDevice("color_sensor")
+color_sensor.enable(timestep)
+
+# Function to detect colors
+def detect_color():
+    rgb = color_sensor.getImage()
+    red = color_sensor.imageGetRed(rgb)
+    green = color_sensor.imageGetGreen(rgb)
+    blue = color_sensor.imageGetBlue(rgb)
+    
+    if red > 200 and green < 100 and blue < 100:
+        return "Red"
+    elif red > 200 and green > 200 and blue < 100:
+        return "Yellow"
+    elif red > 200 and green < 150 and blue > 150:
+        return "Pink"
+    elif red > 100 and green < 100 and blue < 50:
+        return "Brown"
+    elif red < 100 and green > 200 and blue < 100:
+        return "Green"
+    else:
+        return "Unknown"
+
+# Pathfinding function (BFS)
+def bfs(maze, start, target):
+    rows, cols = len(maze), len(maze[0])
+    queue = [(start, [])]  # (current_position, path)
+    visited = set()
+    
+    while queue:
+        (x, y), path = queue.pop(0)
+        
+        if (x, y) in visited:
+            continue
+        visited.add((x, y))
+        path = path + [(x, y)]
+        
+        if maze[x][y] == target:
+            return path
+        
+        # Explore neighbors
+        neighbors = []
+        if x > 0: neighbors.append((x - 1, y))  # Up
+        if x < rows - 1: neighbors.append((x + 1, y))  # Down
+        if y > 0: neighbors.append((x, y - 1))  # Left
+        if y < cols - 1: neighbors.append((x, y + 1))  # Right
+        
+        for nx, ny in neighbors:
+            if (nx, ny) not in visited and maze[nx][ny] <= maze[x][y]:  # Only move to lower or equal values
+                queue.append(((nx, ny), path))
+    
+    return []
+
+# Convert path to movement commands
+def calculate_movements(path):
+    movements = []
+    for i in range(1, len(path)):
+        curr_x, curr_y = path[i - 1]
+        next_x, next_y = path[i]
+        
+        if next_x == curr_x and next_y == curr_y + 1:
+            movements.append('RIGHT')
+        elif next_x == curr_x and next_y == curr_y - 1:
+            movements.append('LEFT')
+        elif next_x == curr_x + 1 and next_y == curr_y:
+            movements.append('DOWN')
+        elif next_x == curr_x - 1 and next_y == curr_y:
+            movements.append('UP')
+    return movements
+
+# Execute movements
+def execute_movements(robot, movements):
+    for move in movements:
+        if move == 'UP':
+            left_motor.setVelocity(MAX_SPEED)
+            right_motor.setVelocity(MAX_SPEED)
+        elif move == 'LEFT':
+            left_motor.setVelocity(-MAX_SPEED / 2)
+            right_motor.setVelocity(MAX_SPEED / 2)
+        elif move == 'RIGHT':
+            left_motor.setVelocity(MAX_SPEED / 2)
+            right_motor.setVelocity(-MAX_SPEED / 2)
+        elif move == 'DOWN':
+            left_motor.setVelocity(-MAX_SPEED)
+            right_motor.setVelocity(-MAX_SPEED)
+        robot.step(timestep)
+    
+    left_motor.setVelocity(0)
+    right_motor.setVelocity(0)
+
+# Main loop
+if __name__ == "__main__":
+    start_position = (9, 8)  # Dynamically find start in actual implementation
+    current_position = start_position
+
+    for target_value in TARGET_VALUES:
+        path = bfs(maze, current_position, target_value)
+        if not path:
+            print(f"Cannot reach target value {target_value}.")
+            break
+        
+        movements = calculate_movements(path)
+        execute_movements(robot, movements)
+        current_position = path[-1]
+        
+        # Detect and print the color at the target
+        color_detected = detect_color()
+        print(f"Reached target: {color_detected}")
