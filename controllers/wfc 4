@@ -1,5 +1,5 @@
 from controller import Robot
-#v1 - v2
+#v3
 def run_robot(robot):
     """ Wall-following robot with color detection based on the whole image """
     
@@ -38,7 +38,7 @@ def run_robot(robot):
         width = camera.getWidth()
         height = camera.getHeight()
         print(f"Camera dimensions: Width = {width}, Height = {height}")  # Debugging info
-        
+
         # Initialize accumulators for RGB values
         total_red = 0
         total_green = 0
@@ -46,12 +46,12 @@ def run_robot(robot):
         total_pixels = width * height  # Total number of pixels in the image
 
         # Iterate over all pixels
-        for y in range(height):
+        for y in range(height-1):
             for x in range(width):
-                # Accumulate RGB values
-                total_red += camera.imageGetRed(image, width, y, x)
-                total_green += camera.imageGetGreen(image, width, y, x)
-                total_blue += camera.imageGetBlue(image, width, y, x)
+                pixel_index = 4 * (y * (width-1) + x)
+                total_red += image[pixel_index + 2]  # Red component
+                total_green += image[pixel_index + 1]  # Green component
+                total_blue += image[pixel_index + 0]  # Blue component
 
         # Calculate the average RGB values
         avg_red = total_red / total_pixels
