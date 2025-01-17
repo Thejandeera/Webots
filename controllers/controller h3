@@ -30,17 +30,18 @@ right_motor.setPosition(float('inf'))
 left_motor.setVelocity(0)
 right_motor.setVelocity(0)
 
-# Color Sensor
+# Color sensor initialization using Camera
 color_sensor = robot.getDevice("color_sensor")
 color_sensor.enable(timestep)
 
-# Detect color using RGB values
+# Function to detect colors using the camera
 def detect_color():
-    rgb = color_sensor.getImage()
-    red = color_sensor.imageGetRed(rgb)
-    green = color_sensor.imageGetGreen(rgb)
-    blue = color_sensor.imageGetBlue(rgb)
+    image = color_sensor.getImage()
+    red = color_sensor.imageGetRed(image, 0, 0)
+    green = color_sensor.imageGetGreen(image, 0, 0)
+    blue = color_sensor.imageGetBlue(image, 0, 0)
     
+    # Map RGB values to colors
     if red > 200 and green < 100 and blue < 100:
         return "Red"
     elif red > 200 and green > 200 and blue < 100:
