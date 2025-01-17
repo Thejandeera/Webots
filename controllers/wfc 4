@@ -1,7 +1,7 @@
 from controller import Robot
-#v3
+
 def run_robot(robot):
-    """ Wall-following robot with color detection based on the whole image """
+    """ Wall-following robot with color detection for small patches of color """
     
     # Get the time step of the current world
     timestep = int(robot.getBasicTimeStep())
@@ -29,7 +29,7 @@ def run_robot(robot):
     camera.enable(timestep)
     
     def detect_color():
-        """Detect the dominant color in the entire image using the camera."""
+        """Detect any prominent color in the image using pixel thresholds."""
         image = camera.getImage()
         if image is None:
             print("Camera image is not available")
@@ -37,37 +37,49 @@ def run_robot(robot):
         
         width = camera.getWidth()
         height = camera.getHeight()
-        print(f"Camera dimensions: Width = {width}, Height = {height}")  # Debugging info
+        # print(f"Camera dimensions: Width = {width}, Height = {height}")  # Debugging info
 
-        # Initialize accumulators for RGB values
-        total_red = 0
-        total_green = 0
-        total_blue = 0
+        # Initialize counters for each color
+        red_count = 0
+        yellow_count = 0
+        pink_count = 0
+        brown_count = 0
+        green_count = 0
         total_pixels = width * height  # Total number of pixels in the image
 
+        # Pixel threshold to detect a color (e.g., at least 5% of total pixels)
+        pixel_threshold = 0.02 * total_pixels
+
         # Iterate over all pixels
-        for y in range(height-1):
+        for y in range(height):
             for x in range(width):
-                pixel_index = 4 * (y * (width-1) + x)
-                total_red += image[pixel_index + 2]  # Red component
-                total_green += image[pixel_index + 1]  # Green component
-                total_blue += image[pixel_index + 0]  # Blue component
+                pixel_index = 4 * (y * width + x)
+                red = image[pixel_index + 2]  # Red component
+                green = image[pixel_index + 1]  # Green component
+                blue = image[pixel_index + 0]  # Blue component
 
-        # Calculate the average RGB values
-        avg_red = total_red / total_pixels
-        avg_green = total_green / total_pixels
-        avg_blue = total_blue / total_pixels
+                # Check pixel against color thresholds
+                if red > 200 and green < 100 and blue < 100:
+                    red_count += 1
+                elif red > 200 and green > 200 and blue < 100:
+                    yellow_count += 1
+                elif red > 200 and green < 150 and blue > 150:
+                    pink_count += 1
+                elif red > 100 and green < 100 and blue < 50:
+                    brown_count += 1
+                elif red < 100 and green > 200 and blue < 100:
+                    green_count += 1
 
-        # Determine the color based on average RGB thresholds
-        if avg_red > 200 and avg_green < 100 and avg_blue < 100:
+        # Check if any color exceeds the pixel threshold
+        if red_count > pixel_threshold:
             return "Red"
-        elif avg_red > 200 and avg_green > 200 and avg_blue < 100:
+        elif yellow_count > pixel_threshold:
             return "Yellow"
-        elif avg_red > 200 and avg_green < 150 and avg_blue > 150:
+        elif pink_count > pixel_threshold:
             return "Pink"
-        elif avg_red > 100 and avg_green < 100 and avg_blue < 50:
+        elif brown_count > pixel_threshold:
             return "Brown"
-        elif avg_red < 100 and avg_green > 200 and avg_blue < 100:
+        elif green_count > pixel_threshold:
             return "Green"
         else:
             return "Unknown"
