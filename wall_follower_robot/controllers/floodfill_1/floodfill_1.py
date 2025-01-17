@@ -176,7 +176,7 @@ if __name__ == "__main__":
     robot = Robot()
     
     facing_direction = 'x'
-    position = [2, 6]
+    position = [9, 8]
 
     maze = [[24, 22, 22, 19, 18, 17, 16, 11, 10, 9],
             [23, 22, 21, 20, 17, 16, 15, 12, 7, 8],
@@ -184,7 +184,7 @@ if __name__ == "__main__":
             [25, 24, 23, 6, 5, 2, 1, 0, 5, 6],
             [26, 25, 24, 7, 4, 3, 2, 1, 4, 7],
             [27, 26, 25, 8, 5, 4, 3, 2, 3, 8],
-            [29, 27, 10, 9, 7, 8, 10, 3, 4, 5],
+            [29, 27, 10, 9, 7, 8, 10, 3, 3, 5],
             [29, 28, 11, 12, 23, 14, 9, 8, 7, 6],
             [30, 31, 34, 35, 38, 15, 12, 11, 8, 11],
             [33, 32, 33, 36, 37, 16, 13, 10, 9, 10]]
@@ -243,7 +243,7 @@ if __name__ == "__main__":
     
     print("Reached value 0, now heading to 16")
     
-    # Then navigate to 16
+        # After reaching 0, navigate to 16
     target_value = 16
     while maze[position[0]][position[1]] != target_value:
         next = find_next(position, maze, target_value)
@@ -295,4 +295,6 @@ if __name__ == "__main__":
         print(f"Current direction: {facing_direction}")
         print(f"Current position: {position}")
     
-    print("Reached final target value 16!")
+    print("Reached value 16!")
+
+  

@@ -4,8 +4,9 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/project
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/floors/protos/RectangleArena.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/apartment_structure/protos/Wall.proto"
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/robots/gctronic/e-puck/protos/E-puck.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/solids/protos/SolidBox.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/robots/gctronic/e-puck/protos/E-puck.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/appearances/protos/Parquetry.proto"
 
 WorldInfo {
   info [
@@ -13,15 +14,20 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation -0.5800861173503865 0.5776360924180036 0.5743140614623791 2.1026121341453923
-  position 0.10591391642631845 0.04391881403965166 5.314333430309269
+  orientation 0.5485198899218525 -0.5581827577170646 -0.6225415161637752 4.270976117376746
+  position -0.6076036029816826 -0.7246673921414979 5.484198722967502
 }
 TexturedBackground {
+  luminosity 16
 }
 TexturedBackgroundLight {
+  castShadows FALSE
 }
 RectangleArena {
   floorSize 2.5 2.5
+  floorAppearance Parquetry {
+    type "light strip"
+  }
 }
 Wall {
   translation -1.125 -1 0
@@ -236,11 +242,6 @@ Wall {
   name "wall(12)"
   size 1.25 0.01 0.1
 }
-E-puck {
-  translation 0.393251 0.62 -0.0033984
-  rotation -6.849074422629176e-07 -0.9999999999997649 -3.61719000364165e-08 0.004094513528271434
-  controller "floodfill_1"
-}
 SolidBox {
   translation -1.13 -0.49 0.05
   name "green box"
@@ -260,9 +261,9 @@ SolidBox {
   }
 }
 SolidBox {
-  translation 0.6699963740611563 0.4851189075915872 0.049882482311998405
-  rotation 0.9996465295405191 -0.026044454487685564 -0.0053387609081900845 0.0022776114510567797
-  name "red box"
+  translation 0.662712 0.491512 0.0499608
+  rotation 0.9999999978111639 -6.616398173568954e-05 -3.320928347372046e-15 3.1415926535897882
+  name "red box("
   size 0.1 0.01 0.1
   appearance PBRAppearance {
     baseColor 1 0 0
@@ -272,15 +273,17 @@ SolidBox {
       ]
       filtering 1
     }
-    roughness 0.5
     metalness 0
   }
   physics Physics {
   }
+  recognitionColors [
+    1 0 0
+  ]
 }
 SolidBox {
-  translation 0.8949709242990888 -0.23515827224403923 0.049843802319641244
-  rotation -0.9788797672661947 -0.2044168021991231 -0.002858708723370115 0.0031074956550687116
+  translation 0.8950100037354334 -0.23483361851998594 0.04996075999999999
+  rotation 3.9292714605100135e-11 -8.872837426857536e-12 -1 7.833686543857684e-06
   name "brown box"
   size 0.1 0.01 0.1
   appearance PBRAppearance {
@@ -298,8 +301,8 @@ SolidBox {
   }
 }
 SolidBox {
-  translation 0.6000000438017168 -0.4851505819014452 0.04985072972187163
-  rotation -0.9999999997899351 -7.126339440774807e-06 1.9218351078145557e-05 0.002886903632766162
+  translation 0.6000000448343712 -0.48529492668978996 0.04996075995602242
+  rotation -0.05517197451989645 -1.5092418434364501e-07 0.9984768666461697 5.559828165773378e-08
   name "pink box"
   size 0.1 0.01 0.1
   appearance PBRAppearance {
@@ -317,8 +320,8 @@ SolidBox {
   }
 }
 SolidBox {
-  translation 0.12481123914532022 -1.2400001502262594 0.049813362336985294
-  rotation 0.006676255158786432 -0.999977211394057 -0.0010021524934234905 0.0005593278791687935
+  translation 0.12483920487253317 -1.2399999635237837 0.04996075985580912
+  rotation 1.6313328710986495e-05 -0.000984501620362944 -0.9999995152451 5.616630350220397e-07
   name "yellow box"
   size 0.1 0.01 0.1
   appearance PBRAppearance {
@@ -334,4 +337,9 @@ SolidBox {
   }
   physics Physics {
   }
+}
+E-puck {
+  translation 0.871373 -0.934247 -0.00020588
+  rotation 9.967229884131544e-05 -0.00011539199865857487 0.9999999883750595 1.48625
+  controller "hasintha"
 }
