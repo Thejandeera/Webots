@@ -42,7 +42,7 @@ def run_robot(robot):
     color_thresholds = {
         "Red": ColorThreshold(180, 255, 0, 100, 0, 100),
         "Yellow": ColorThreshold(180, 255, 180, 255, 0, 100),
-        "Pink": ColorThreshold(180, 255, 0, 150, 150, 255),
+        "Pink": ColorThreshold(180, 255, 0, 100, 190, 255),
         "Brown": ColorThreshold(140, 170, 80, 120, 50, 120),
         "Green": ColorThreshold(0, 100, 180, 255, 0, 100)
     }
