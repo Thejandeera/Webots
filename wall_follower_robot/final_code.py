@@ -1,11 +1,10 @@
-"""left wall folow and color detect code """
+"""Webots competition | bot_forge | round 1"""
 
 from controller import Robot
 c_values = [0, 0, 0, 0]
 printed_colors = set()
 
 def run_robot(robot):
-    """ Wall-following robot with enhanced color detection and termination condition """
     
     # Get the time step of the current world
     timestep = int(robot.getBasicTimeStep())
@@ -110,40 +109,33 @@ def run_robot(robot):
         # Logic for wall following and centering between walls
         if not green_detected:
             if front_wall:
-                # print("Turn right in place")
                 left_speed = max_speed
                 right_speed = -max_speed
             else:
                 if left_wall and right_wall:
-                    # print("Centering between two walls")
                     balance_factor = (left_distance - right_distance) / 10
                     left_speed = max_speed - balance_factor
                     right_speed = max_speed + balance_factor
                 elif left_wall:
-                    # print("Drive forward along left wall")
                     left_speed = max_speed
                     right_speed = max_speed
                 elif right_wall:
-                    # print("Drive forward along right wall")
                     left_speed = max_speed
                     right_speed = max_speed / 2
                 else:
-                    # print("Searching for wall")
                     left_speed = max_speed / 8
                     right_speed = max_speed
                 if left_corner:
-                    # print("Came too close, turn right")
                     left_speed = max_speed
                     right_speed = max_speed / 8
         
         # Enhanced color detection
         # Initialize variables
-            
-            
             detected_color, confidence = detect_color()
             
             color_val = 0 
             
+            #Setting up variable belongs to colors
             if detected_color != "Unknown":
                 if detected_color == "Red":
                     c_values[0] += 1
@@ -161,33 +153,23 @@ def run_robot(robot):
                         c_values[3] += 1
                         color_val = c_values[3]
                     
-                # print(f"Current Color Count: {c_values}")        
+                #printing detected color if it according to sequence     
                 if color_val >  1 : 
                     if detected_color not in printed_colors:
-                        print(f"Patter color detected: {detected_color} ")
+                        print(f"Sequence color detected: {detected_color} ")
                         printed_colors.add(detected_color)
-                    #(Confidence: {confidence:.2%})
-                
-                
-                # Increment the respective color count
-                
-                
+  
                 # Detect green color with a confidence threshold
                 if detected_color == "Green" and confidence > 0.02:  
                     if not green_detected:
                         if all(c > 0 for c in c_values):
-                            print("Patter color detected: Green ")
+                            print("Sequence color detected: Green ")
                             print("Moving forward to final position...")
                             green_detected = True
                             forward_steps = 0
             
-            # Termination sequence
+                        # Termination sequence
                         if green_detected:
-               
-                            print("Controller executed Successfully...!")
-                            
-                            
-                            # Move forward for the calculated time
                             start_time = robot.getTime()  # Get the start time
                             
                             while robot.getTime() - start_time < 3.98 :
@@ -199,12 +181,9 @@ def run_robot(robot):
                             # Stop the motors after traveling 50 cm
                             left_motor.setVelocity(0.0)
                             right_motor.setVelocity(0.0)
-                            print("Executed successfully!")
+                            print("Controller Executed successfully!")
                             break  # Terminate the robot movement after stopping
-                        
 
-
-        
         # Set motor velocities
         left_motor.setVelocity(left_speed)
         right_motor.setVelocity(right_speed)
