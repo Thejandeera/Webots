@@ -9,6 +9,7 @@ MAX_SPEED = 6.28  # Maximum speed in rad/s
 #Angle for  turning 90 degrees
 ANGLE = 11600
 
+
 def inisialize_sensor(timestep):
     proxy_sensors = []
     for i in range(8):
@@ -30,24 +31,64 @@ def move_forward(robot):
     right_motor.setVelocity(MAX_SPEED)
 
 
-    time_needed = 2
+    time_needed = 1.8
     start_time = robot.getTime()
     timestep = int(robot.getBasicTimeStep())
 
     proxy_sensors = inisialize_sensor(timestep)
+    
+    gyro = robot.getDevice('gyro')
+    gyro.enable(timestep)
+    
+    time_x = robot.getTime()
 
+    al = 0
+    l = False
+    r = False
 
     while robot.step(timestep) != -1:
-        sensor_value = proxy_sensors[0].getValue() > 80
+        # print(proxy_sensors[2].getValue(), proxy_sensors[5].getValue() )
+        gyro_values = gyro.getValues()
+
+        time_y = robot.getTime()
+
+        left = proxy_sensors[5].getValue() > 100
+        right = proxy_sensors[2].getValue() > 100
+        
+        step_duration = 500  # Duration in milliseconds (500 ms = 0.5 seconds)
+        steps = int(step_duration / timestep)
+        for _ in range(steps):
+            if robot.step(timestep) == -1:
+                if left and not l:
+                    left_motor.setVelocity(MAX_SPEED)
+                    right_motor.setVelocity(MAX_SPEED/4)
+                    al += gyro_values[2] * (time_y - time_x)
+                    l = True
+                break
+        
+        
+        for _ in range(steps):
+            if robot.step(timestep) == -1:
+
+                if right and  r:
+                    left_motor.setVelocity(MAX_SPEED/4)
+                    right_motor.setVelocity(MAX_SPEED)
+                    al += gyro_values[2] * (time_y - time_x)
+                    r = True
+                break
+        
+        time_x = time_y
+            
+        sensor_value = proxy_sensors[0].getValue() > 80 and proxy_sensors[7].getValue()
 
         if robot.getTime() - start_time >= time_needed or sensor_value:
             break
             
     left_motor.setVelocity(0)
     right_motor.setVelocity(0)
-    return sensor_value
+    return sensor_value, al
 
-def turn_left(robot):
+def turn_left(robot, al):
     timestep = int(robot.getBasicTimeStep())
 
     left_motor = robot.getDevice('left wheel motor')
@@ -64,7 +105,8 @@ def turn_left(robot):
     right_motor.setVelocity(speed)  # Forward right wheel
 
     time_x = robot.getTime()
-    angle = 0
+    angle = al
+    print(al)
     while robot.step(timestep) != -1:
         gyro_values = gyro.getValues()
         time_y = robot.getTime()
@@ -77,7 +119,7 @@ def turn_left(robot):
     right_motor.setVelocity(0)
 
 #Turn Right    
-def turn_right(robot):
+def turn_right(robot, al):
     timestep = int(robot.getBasicTimeStep())
 
     left_motor = robot.getDevice('left wheel motor')
@@ -96,7 +138,7 @@ def turn_right(robot):
     right_motor.setVelocity(-speed)  # Forward right wheel
 
     time_x = robot.getTime()
-    angle = 0
+    angle = al
     while robot.step(timestep) != -1:
         gyro_values = gyro.getValues()
         time_y = robot.getTime()
@@ -140,7 +182,7 @@ def turn_back(robot):
                 
 if __name__ == "__main__":
     robot = Robot()
-    
+    al = 0
     
     """
     Hard Codded Paths
@@ -167,18 +209,24 @@ if __name__ == "__main__":
         for move in color:
             print(move)
             if move == 'f':
-                if move_forward(robot):
+                sensor_value, al = move_forward(robot)
+                if sensor_value :
                     continue
                       
             elif move == 'l':
-                turn_left(robot)
-                if move_forward(robot):
+                turn_left(robot, al)
+                sensor_value, al = move_forward(robot)
+
+                if sensor_value:
                    continue
         
             elif move == 'r':
-                turn_right(robot)
-                if move_forward(robot):
+                turn_right(robot, al)
+                sensor_value, al = move_forward(robot)
+
+                if sensor_value:
                    continue
+                   
             elif move == 'b':
                 turn_back(robot)
  
