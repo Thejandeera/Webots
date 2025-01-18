@@ -2,6 +2,7 @@
 
 from controller import Robot
 c_values = [0, 0, 0, 0]
+printed_colors = set()
 
 def run_robot(robot):
     """ Wall-following robot with enhanced color detection and termination condition """
@@ -163,7 +164,9 @@ def run_robot(robot):
                     
                 # print(f"Current Color Count: {c_values}")        
                 if color_val >  1 : 
-                    print(f"Patter color detected: {detected_color} ")
+                    if detected_color not in printed_colors:
+                        print(f"Patter color detected: {detected_color} ")
+                        printed_colors.add(detected_color)
                     #(Confidence: {confidence:.2%})
                 
                 
@@ -174,7 +177,8 @@ def run_robot(robot):
                 if detected_color == "Green" and confidence > 0.02:  
                     if not green_detected:
                         if all(c > 0 for c in c_values):
-                            print("Green color detected! Moving forward to final position...")
+                            print("Patter color detected: Green ")
+                            print("Moving forward to final position...")
                             green_detected = True
                             forward_steps = 0
             
